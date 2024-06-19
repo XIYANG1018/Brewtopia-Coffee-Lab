@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.heading {
+    padding-top: 60px;
+    font-family: Montserrat;
+}
+
+.details {
+    background-color: black;
+    color: white;
+    padding: 2rem;
+    font-family: Montserrat;
+
+}
+
+.listGroupItem {
+    background-color: transparent;
+    color: white;
+}
+
+h3 {
+    text-transform: uppercase;
+}
