@@ -1,34 +1,66 @@
-import {React, useState} from 'react'
-import products from '../products'
+// import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Rating from '../components/Rating';
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import styles from "./Screens.module.css"
+// import axios from 'axios';
+import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 
-import { Row, Col, ListGroup, Image, Card, Button, ListGroupItem, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image} from 'react-bootstrap';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+
 
 const ProductScreen = () => {
-    // get the id from the router
-    const { id:productId } = useParams();
-    // find the product by id
-    const product = products.find((p) => p._id === productId)
-    console.log(product);
+  // get the id from the router
+  const { id: productId } = useParams();
+  // // product 的初始状态设置为一个空对象，以避免在未定义对象上访问属性时出现错误
+  // const [product, setProduct] = useState({});
+  
+  // useEffect(() => {
+  //   const fetchProduct = async () => {
+  //     const { data } =  await axios.get(`/api/products/${productId}`);
+  //     setProduct(data);
+  //   }
 
-    const colorStyle = {
-      backgroundColor: product.color,
-      color: product.textColor
-    }
+  //   fetchProduct();
+  // }, [productId]);
 
-    const textColor = {
-      color: product.textColor
-    }
+  const { data: product, isLoading, error } = useGetProductDetailsQuery(productId);
 
-    const [selectedSize, setSelectedSize] = useState(Object.keys(product.sizes)[0]);
+  // console.log(product);
+
+  
+  const sizes = ['4oz', '10oz', '2lbs', '5lbs'];
+  const [activeButton, setActiveButton] = useState(sizes[0]);
+
+  // useGetProductDetailsQuery 自定义 Hook 返回的数据有延迟，那么在初始渲染时可能是 undefined。
+  // 这种情况下，需要确保在访问 product 属性之前进行有效性检查，以避免访问 undefined 的属性。
+  const colorStyle = product ? {
+    backgroundColor: product.color,
+    color: product.textColor
+  } : {};
+  
+  const textColor = product ? {
+    color: product.textColor
+  } : {};
+  
+
+  
+  const handleButtonClick = (size) => {
+    setActiveButton(size);
+  };
 
 
   return (
     <>
     <Link className='btn btn-light my-3' to='/' style={colorStyle}>Go Back</Link>
+    {isLoading ? (
+        <Loader />
+    ) : error ? (
+      <Message variant={'danger'}>{ error?.data?.message || error.error }</Message>
+    ) : (
     <Row>
 
         <Col md={5}>
@@ -52,26 +84,44 @@ const ProductScreen = () => {
 
             <ListGroup.Item className={styles.listGroupItem}>
               <h3 style={textColor}>Select a Size</h3>
-              <ButtonGroup toggle>
-                {Object.keys(product.sizes).map((size) => (
-                  <ToggleButton
-                  key={size}
-                  type='radio'
-                  variant='secondary'
-                  name='size'
-                  value={size}
-                  checked={selectedSize === size}
-                  onChange={(e) => setSelectedSize(e.currentTarget.value)}
-                  >
-                    {size}
-                  </ToggleButton>
-                ))}
-              </ButtonGroup>
+              <div className='d-flex justify-content-between'>
+                <div className="btn-group" role="group">
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      className={`btn btn-outline-light ${activeButton === size ? 'active' : ''}`}
+                      onClick={() => handleButtonClick(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                <h2>
+    
+                ${product.sizes?.[activeButton]}
+                </h2>
+              </div>
+
+              <div className='d-flex justify-content-end'>
+                <strong>{product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}</strong>
+              </div>           
+
+            </ListGroup.Item>
+              
+            <ListGroup.Item className={styles.listGroupItem}>
+
+              <button style={{ width: '100%' }} className='btn btn-outline-light' disabled={product.countInStock === 0}>
+                +Add To Cart
+              </button>
+
+
+              
+              
+              
+              
             </ListGroup.Item>
 
-            <ListGroup.Item>
-              <h2>${product.sizes[selectedSize].toFixed(2)}</h2>
-            </ListGroup.Item>
           </ListGroup>
 
     
@@ -80,7 +130,7 @@ const ProductScreen = () => {
         
         
     </Row>
-
+    )}
     </>
   )
 }

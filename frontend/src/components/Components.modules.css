@@ -23,7 +23,7 @@ a {
     overflow: hidden;
 }
 
-.product-image .hover-image {
+.hover-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -33,7 +33,7 @@ a {
     transition: opacity 0.5s ease;
 }
 
-.product-image .card-image {
+.card-image {
     transition: opacity 0.3s ease;
 
 }
@@ -48,4 +48,13 @@ a {
 
 .icon {
     margin-right: 0.5rem;
+}
+
+.header-text {
+    color: gray;
+    transition: color 0.3s;
+}
+
+.header-text:hover {
+    color:chocolate;
 }

@@ -21,3 +21,7 @@
 h3 {
     text-transform: uppercase;
 }
+
+.btn .btn-outline-light .active {
+    color: black;
+}
