@@ -1,20 +1,33 @@
 // import React, { useEffect, useState } from 'react';
+
 import React, { useState } from 'react';
 import Rating from '../components/Rating';
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import styles from "./Screens.module.css"
 // import axios from 'axios';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 
-import { Row, Col, ListGroup, Image} from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Form} from 'react-bootstrap';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import { addToCart } from '../slices/cartSlice';
+import { useDispatch } from 'react-redux';
 
 
 const ProductScreen = () => {
   // get the id from the router
   const { id: productId } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [qty, setQty] = useState(1); // default quantity is 1
+
+  
+
+  // 用axios从后端获取数据的方法：
+
   // // product 的初始状态设置为一个空对象，以避免在未定义对象上访问属性时出现错误
   // const [product, setProduct] = useState({});
   
@@ -27,7 +40,13 @@ const ProductScreen = () => {
   //   fetchProduct();
   // }, [productId]);
 
+  // 用Redux Toolkit的useGetProductDetailsQuery自定义 Hook从后端获取数据的方法：
   const { data: product, isLoading, error } = useGetProductDetailsQuery(productId);
+
+  const addToCartHandler = () => {
+    dispatch(addToCart({ ...product, qty})); // dispatch the addToCart action function with the product and quantity
+    navigate('/cart'); // redirect to the cart page
+  }
 
   // console.log(product);
 
@@ -62,7 +81,6 @@ const ProductScreen = () => {
       <Message variant={'danger'}>{ error?.data?.message || error.error }</Message>
     ) : (
     <Row>
-
         <Col md={5}>
             <Image src={product.image} alt={product.name} fluid />
         </Col>
@@ -110,16 +128,40 @@ const ProductScreen = () => {
             </ListGroup.Item>
               
             <ListGroup.Item className={styles.listGroupItem}>
+              {product.countInStock > 0 && (
+                <Row>
+                  <Col xs={3} className="d-flex align-items-center">
+                    <span>Quantity:</span></Col>
+                  <Col xs={3}>
+                    <Form.Control 
+                      as='select'
+                      value={qty} 
+                      onChange={(e) => setQty(Number(e.target.value))}>
+                        {[...Array(product.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </Form.Control>
+                      
+                  
+                  </Col>
+                  <Col xs={6}>
+                    <button 
+                      style={{ width: "100%"}}
+                      className='btn btn-outline-light' 
+                      
+                      disabled={product.countInStock === 0}
+                      onClick={addToCartHandler}
+                      >
+                      + Add To Cart
+                    </button>
+                  </Col>
 
-              <button style={{ width: '100%' }} className='btn btn-outline-light' disabled={product.countInStock === 0}>
-                +Add To Cart
-              </button>
+                </Row>
+              )}
+             
 
-
-              
-              
-              
-              
             </ListGroup.Item>
 
           </ListGroup>
