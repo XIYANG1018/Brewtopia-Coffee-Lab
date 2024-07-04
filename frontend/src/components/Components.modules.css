@@ -53,8 +53,11 @@ a {
 .header-text {
     color: gray;
     transition: color 0.3s;
+    font-weight: 600;
 }
 
+
 .header-text:hover {
-    color:chocolate;
+    color:rgb(161, 80, 22);
 }
+

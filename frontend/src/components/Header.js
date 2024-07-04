@@ -15,7 +15,7 @@ const Header = () => {
   
   return (
     <header>
-      <Navbar bg="transparent" variant='dark' expand="md" collapseOnSelect>
+      <Navbar variant='light' expand="md" collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand className='header-text'>

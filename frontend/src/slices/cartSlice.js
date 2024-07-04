@@ -15,7 +15,7 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         addToCart: (state, action) => { // state is the current state of the cart
-            const item = action.payload; // payload is the item that we want to add to the cart
+            const item = action.payload; // payload is the data carried along with our action
 
             const existItem = state.cartItems.find((x) => x._id === item._id); // check if the item already exists in the cart
 
@@ -27,11 +27,16 @@ const cartSlice = createSlice({
 
             return updateCart(state); // update the cart
 
-        }
+        },
+
+        removeFromCart: (state, action) => {
+            state.cartItems = state.cartItems.filter((x) => x._id !== action.payload); // filter out the item that we want to remove
+            return updateCart(state); // update the cart
+        },
     }, // contains action functions of the cart
 
 });
 
 // in order to use the addToCart action function, we need to export it as an action
-export const { addToCart } = cartSlice.actions;
+export const { addToCart, removeFromCart } = cartSlice.actions;
 export default cartSlice.reducer;

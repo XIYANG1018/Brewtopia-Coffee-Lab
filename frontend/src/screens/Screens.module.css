@@ -15,7 +15,7 @@
 
 .listGroupItem {
     background-color: transparent;
-    color: white;
+    color: #fffcf2;
 }
 
 h3 {
@@ -25,6 +25,8 @@ h3 {
 .btn .btn-outline-light .active {
     color: black;
 }
+
+
 
 
   
