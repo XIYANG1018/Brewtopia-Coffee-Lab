@@ -4,7 +4,7 @@ import { updateCart } from "../utils/cartUtils";
 // when we leave the cart and come back, we want to see the current items in the cart
 // so we need to check the local storage for the cart items
 // 即便刷新页面，也能保留购物车中的商品
-const initialState = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : {cartItems: []};
+const initialState = localStorage.getItem("cart") ? JSON.parse(localStorage.getItem("cart")) : {cartItems: [], shippingAddress: {}, paymentMethod: 'PayPal'}; 
 
 const addDecimal = (num) => {
     return (Math.round(num * 100) / 100).toFixed(2);
@@ -33,10 +33,25 @@ const cartSlice = createSlice({
             state.cartItems = state.cartItems.filter((x) => x._id !== action.payload); // filter out the item that we want to remove
             return updateCart(state); // update the cart
         },
+
+        saveShippingAddress: (state, action) => {
+            state.shippingAddress = action.payload; // save the shipping address
+            return updateCart(state); // update the cart
+        },
+
+        savePaymentMethod: (state, action) => {
+            state.paymentMethod = action.payload; // save the payment method
+            return updateCart(state); // update the cart
+        },
+
+        clearCartItems: (state, action) => {
+            state.cartItems = []; // clear the cart items
+            return updateCart(state); // update the cart
+        },
     }, // contains action functions of the cart
 
 });
 
 // in order to use the addToCart action function, we need to export it as an action
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress, savePaymentMethod, clearCartItems } = cartSlice.actions;
 export default cartSlice.reducer;

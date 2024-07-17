@@ -1,6 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { getProducts, getProductById } from '../controllers/productController.js';
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
+import { protect, admin } from '../middleware/authMiddleware.js';
+
 
 
 // 没有controller的写法
@@ -24,8 +26,9 @@ import { getProducts, getProductById } from '../controllers/productController.js
 
 
 // 加上controller的写法
-router.route('/').get(getProducts);
-router.route('/:id').get(getProductById);
+router.route('/').get(getProducts).post(protect, admin, createProduct);
+router.route('/:id').get(getProductById).put(protect, admin, updateProduct).delete(protect, admin, deleteProduct);
+
 
 
 export default router;

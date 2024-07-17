@@ -4,6 +4,7 @@ import User from '../models/userModel.js';
 
 // Protect routes
 const protect = asyncHandler(async (req, res, next) => {
+
     let token;
 
     // read the jwt from the cookie
@@ -27,6 +28,7 @@ const protect = asyncHandler(async (req, res, next) => {
 
 // Admin middleware
 const admin = (req, res, next) => {
+
     if (req.user && req.user.isAdmin) {
         next();
     } else {
